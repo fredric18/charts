@@ -197,7 +197,7 @@ postDelete:
     # Optional: Image-specific registry override
     # registry: ""
     repository: rancher/shell
-    tag: v0.5.0
+    tag: v0.6.2
     # Optional: Image-specific pullPolicy Override
     # options: Always, Never, IfNotPresent
     # pullPolicy: "Always"
@@ -215,7 +215,7 @@ preUpgrade:
     # Optional: Image-specific registry override
     # registry: ""
     repository: rancher/shell
-    tag: v0.5.0
+    tag: v0.6.2
     # Optional: Image-specific pull policy override
     # pullPolicy: "Always"
 
@@ -247,6 +247,10 @@ readinessProbe:
   timeoutSeconds: 5
   periodSeconds: 30
   failureThreshold: 5
+
+# Enable host networking for Rancher pods.
+# Required for EKS clusters using non-VPC CNIs (e.g. Calico).
+hostNetwork: false
 
 # helm values to use when installing the rancher-webhook chart.
 # helm values set here will override all other global values used when installing the webhook such as priorityClassName and systemRegistry settings.
