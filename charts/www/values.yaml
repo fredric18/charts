@@ -1,65 +1,66 @@
-# Default values for www Helm chart.
-replicaCount: 2
-
-image:
-  repository: ghcr.io/fredric18/www
-  pullPolicy: IfNotPresent
-  tag: "latest"
-
-imagePullSecrets:
-  - ghcr-secret
-nameOverride: ""
-fullnameOverride: ""
-
-serviceAccount:
-  create: true
-  annotations: {}
-  name: ""
-
-podAnnotations: {}
-
-podSecurityContext:
-  fsGroup: 1001
-
-securityContext:
-  runAsNonRoot: true
-  runAsUser: 1001
+# bjw-s/common v5.0.1 schema configuration for www application
+controllers:
+  main:
+    replicas: 2
+    containers:
+      main:
+        image:
+          repository: ghcr.io/fredric18/www
+          tag: latest
+          pullPolicy: IfNotPresent
+        probes:
+          liveness:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /
+                port: 3000
+              initialDelaySeconds: 10
+              periodSeconds: 10
+          readiness:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /
+                port: 3000
+              initialDelaySeconds: 5
+              periodSeconds: 5
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
 
 service:
-  type: ClusterIP
-  port: 80
-  targetPort: 3000
+  main:
+    controller: main
+    ports:
+      http:
+        port: 3000
 
 ingress:
-  enabled: false
-  className: "nginx"
-  annotations:
-    cert-manager.io/cluster-issuer: "letsencrypt-prod"
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-  hosts:
-    - host: www.fredric18.uk
-      paths:
-        - path: /
-          pathType: Prefix
-  tls:
-    - secretName: www-fredric18-tls
-      hosts:
-        - www.fredric18.uk
+  main:
+    enabled: false
+    className: nginx
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    hosts:
+      - host: www.fredric18.uk
+        paths:
+          - path: /
+            service:
+              identifier: main
+              port: http
+    tls:
+      - secretName: www-fredric18-tls
+        hosts:
+          - www.fredric18.uk
 
-resources:
-  limits:
-    cpu: 500m
-    memory: 512Mi
-  requests:
-    cpu: 100m
-    memory: 128Mi
-
-autoscaling:
-  enabled: true
-  minReplicas: 2
-  maxReplicas: 10
-  targetCPUUtilizationPercentage: 80
-
-nodeSelector: {}
-tolerations: []
-affinity: {}
+# GHCR Private image pull secrets
+imagePullSecrets:
+  - name: ghcr-secret

@@ -1,6 +1,10 @@
 apiVersion: v2
 name: www
-description: Helm chart for Fredric18 www landing application
+description: Helm chart for Fredric18 www landing application using bjw-s common library
 type: application
 version: 0.1.0
 appVersion: "1.0.0"
+dependencies:
+  - name: common
+    version: 5.0.1
+    repository: https://bjw-s-labs.github.io/helm-charts/
