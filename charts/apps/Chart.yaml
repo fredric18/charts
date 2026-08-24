@@ -1,0 +1,10 @@
+apiVersion: v2
+name: apps
+description: Helm chart for Fredric18 apps utility hub application using bjw-s common library
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+dependencies:
+  - name: common
+    version: 5.0.1
+    repository: https://bjw-s-labs.github.io/helm-charts/

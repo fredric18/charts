@@ -1,0 +1,66 @@
+# bjw-s/common v5.0.1 schema configuration for apps application
+controllers:
+  main:
+    replicas: 2
+    containers:
+      main:
+        image:
+          repository: ghcr.io/fredric18/apps
+          tag: latest
+          pullPolicy: IfNotPresent
+        probes:
+          liveness:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /
+                port: 3000
+              initialDelaySeconds: 10
+              periodSeconds: 10
+          readiness:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /
+                port: 3000
+              initialDelaySeconds: 5
+              periodSeconds: 5
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+
+service:
+  main:
+    controller: main
+    ports:
+      http:
+        port: 3000
+
+ingress:
+  main:
+    enabled: true
+    className: nginx
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    hosts:
+      - host: apps.fredric18.uk
+        paths:
+          - path: /
+            service:
+              identifier: main
+              port: http
+    tls:
+      - secretName: apps-fredric18-tls
+        hosts:
+          - apps.fredric18.uk
+
+# GHCR Private image pull secrets
+imagePullSecrets:
+  - name: ghcr-secret
