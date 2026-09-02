@@ -2,12 +2,18 @@
 controllers:
   main:
     replicas: 2
+    strategy: Recreate
     containers:
       main:
         image:
           repository: ghcr.io/fredric18/apps
           tag: latest
           pullPolicy: IfNotPresent
+        env:
+          RAPIDAPI_KEY: "aff999bdd9mshcf89354579452aap1cbeb3jsnbfa883e67e64"
+          RAPIDAPI_HOST: "real-time-amazon-data.p.rapidapi.com"
+          AMAZON_DATA_DIR: "/data"
+          AMAZON_DATA_FILE: "/data/deals.json"
         probes:
           liveness:
             enabled: true
@@ -60,6 +66,16 @@ ingress:
       - secretName: apps-fredric18-tls
         hosts:
           - apps.fredric18.uk
+
+# Persistent Volume Claim for persistent daily deals caching across pod redeployments
+persistence:
+  data:
+    type: persistentVolumeClaim
+    accessMode: ReadWriteOnce
+    size: 1Gi
+    retain: true
+    globalMounts:
+      - path: /data
 
 # GHCR Private image pull secrets
 imagePullSecrets:
