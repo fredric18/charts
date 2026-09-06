@@ -67,6 +67,15 @@ ingress:
         hosts:
           - apps.fredric18.uk
 
+# Pod Security Context for non-root execution and automatic volume write permissions
+defaultPodOptions:
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1001
+    runAsGroup: 1001
+    fsGroup: 1001
+    fsGroupChangePolicy: "OnRootMismatch"
+
 # Persistent Volume Claim for persistent daily deals caching across pod redeployments
 persistence:
   data:
@@ -76,6 +85,10 @@ persistence:
     retain: true
     globalMounts:
       - path: /data
+  next-cache:
+    type: emptyDir
+    globalMounts:
+      - path: /app/.next/cache
 
 # GHCR Private image pull secrets
 imagePullSecrets:
