@@ -10,10 +10,16 @@ controllers:
           tag: latest
           pullPolicy: IfNotPresent
         env:
-          RAPIDAPI_KEY: "aff999bdd9mshcf89354579452aap1cbeb3jsnbfa883e67e64"
-          RAPIDAPI_HOST: "real-time-amazon-data.p.rapidapi.com"
+          AMAZON_RAPIDAPI_KEY: "aff999bdd9mshcf89354579452aap1cbeb3jsnbfa883e67e64"
+          AMAZON_RAPIDAPI_HOST: "real-time-amazon-data.p.rapidapi.com"
           AMAZON_DATA_DIR: "/data"
-          AMAZON_DATA_FILE: "/data/deals.json"
+          AMAZON_DATA_FILE: "/data/amazon-deals.json"
+          ALIEXPRESS_RAPIDAPI_KEY: "aff999bdd9mshcf89354579452aap1cbeb3jsnbfa883e67e64"
+          ALIEXPRESS_RAPIDAPI_HOST: "aliexpress-business-api.p.rapidapi.com"
+          ALIEXPRESS_DATA_DIR: "/data"
+          ALIEXPRESS_DATA_FILE: "/data/aliexpress-deals.json"
+          QUOTES_DATA_DIR: "/data"
+          QUOTES_DATA_FILE: "/data/quotes.json"
         probes:
           liveness:
             enabled: true
@@ -67,6 +73,15 @@ ingress:
         hosts:
           - apps.fredric18.uk
 
+# Pod Security Context for non-root execution and automatic volume write permissions
+defaultPodOptions:
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1001
+    runAsGroup: 1001
+    fsGroup: 1001
+    fsGroupChangePolicy: "OnRootMismatch"
+
 # Persistent Volume Claim for persistent daily deals caching across pod redeployments
 persistence:
   data:
@@ -76,6 +91,10 @@ persistence:
     retain: true
     globalMounts:
       - path: /data
+  next-cache:
+    type: emptyDir
+    globalMounts:
+      - path: /app/.next/cache
 
 # GHCR Private image pull secrets
 imagePullSecrets:
