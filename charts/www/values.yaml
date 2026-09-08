@@ -61,6 +61,23 @@ ingress:
         hosts:
           - www.fredric18.uk
 
+# Pod Security Context for non-root execution and automatic volume write permissions
+defaultPodOptions:
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1001
+    runAsGroup: 1001
+    fsGroup: 1001
+    fsGroupChangePolicy: "OnRootMismatch"
+
+# Persistent/temporary storage for Next.js prerender and data caching
+persistence:
+  next-cache:
+    type: emptyDir
+    globalMounts:
+      - path: /app/.next/cache
+
 # GHCR Private image pull secrets
 imagePullSecrets:
   - name: ghcr-secret
+
