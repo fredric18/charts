@@ -18,10 +18,6 @@ controllers:
           ALIEXPRESS_RAPIDAPI_HOST: "aliexpress-business-api.p.rapidapi.com"
           ALIEXPRESS_DATA_DIR: "/data/ads"
           ALIEXPRESS_DATA_FILE: "/data/ads/aliexpress-deals.json"
-          QUOTES_DATA_DIR: "/data/utils"
-          QUOTES_DATA_FILE: "/data/utils/quotes.json"
-          FITNESS_DATA_DIR: "/data/utils"
-          FITNESS_DATA_FILE: "/data/utils/exercises.json"
         probes:
           liveness:
             enabled: true
